@@ -5,7 +5,7 @@ import '../../testData/user_controller.dart';
 import '../../model/user/user_account.dart';
 
 class UserInfo extends StatelessWidget {
-  final UserModel post;
+  final UserAccountModel post;
   final int index;
 
   UserInfo({

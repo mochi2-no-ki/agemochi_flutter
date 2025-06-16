@@ -1,8 +1,8 @@
-//ユーザー情報モデル
+//user_account
 
 import 'package:flutter/material.dart';
 
-class UserModel {
+class UserAccountModel {
   final String userId; //ユーザーID
   final String mochiId; //ユーザー指定のID
   final String userName; //名前
@@ -13,7 +13,7 @@ class UserModel {
   final DateTime createdAt; //作成日時
   final DateTime updatedAt; //更新日時
 
-  UserModel({
+  UserAccountModel({
     required this.userId,
     required this.mochiId,
     required this.userName,
