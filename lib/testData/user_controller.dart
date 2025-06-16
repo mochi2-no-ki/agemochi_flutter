@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import '../model/user/user_account.dart';
 
 class MyprofileController {
-  final UserModel posts = UserModel(
+  final UserAccountModel posts = UserAccountModel(
     userId: 'a1',
     mochiId: 'miumiu',
     userName: 'ちゃんみー',
@@ -19,8 +19,8 @@ class MyprofileController {
 }
 
 class UserController {
-  final List<UserModel> _posts = [
-    UserModel(
+  final List<UserAccountModel> _posts = [
+    UserAccountModel(
       userId: 'b1',
       mochiId: 'ta_ma',
       userName: '玉子',
@@ -31,7 +31,7 @@ class UserController {
       createdAt: DateTime(2025, 06, 21),
       updatedAt: DateTime(2025, 06, 29),
     ),
-    UserModel(
+    UserAccountModel(
       userId: 'c1',
       mochiId: 'hare_hare',
       userName: '太陽',
@@ -43,5 +43,5 @@ class UserController {
       updatedAt: DateTime(2025, 07, 29),
     ),
   ];
-  List<UserModel> get userController => _posts;
+  List<UserAccountModel> get userController => _posts;
 }
