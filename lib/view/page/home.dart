@@ -1,21 +1,20 @@
-import 'package:agemoti/testData/user_controller.dart';
-import 'package:agemoti/view/components/userInfo.dart';
 import 'package:flutter/material.dart';
 
-import 'package:agemoti/testData/routine_controller.dart';
-import '../components/card.dart'; // RoutineCard のパスに注意
+import 'package:agemoti/testData/routine_test.dart';
+import '../components/card.dart';
 import '../../model/routine/routine_model.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key});
+  Home({
+    super.key,
+  });
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final RoutineController _routineController = RoutineController();
-  final MyprofileController _myProfileController = MyprofileController();
+  final CardController _routineController = CardController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +32,20 @@ class _HomeState extends State<Home> {
   }
 
   Widget _card() {
-    final List<RoutineModel> posts = _routineController.routineModel;
-
+    final List<RoutineCardModel> posts = _routineController.post;
     return GridView.builder(
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      padding: const EdgeInsets.all(8.0),
       itemCount: posts.length,
       itemBuilder: (context, index) {
-        return Column(
-          children: [
-            RoutineCard(index: index, post: posts[index]),
-          ],
+        final routine = posts[index];
+        print(userTestData.length);
+
+        return RoutineCard(
+          index: index,
+          post: routine,
         );
       },
     );
