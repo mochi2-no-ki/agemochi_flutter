@@ -63,6 +63,96 @@ class CardController {
       referenceCount: 7,
       routineSaveCount: 5,
     ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
+    RoutineCardModel(
+      routineId: 'r006',
+      routineTitle: '映画でリラックス',
+      routineTime: 120,
+      tags: [tagdata[7], tagdata[6]], // 映画, 癒し
+      user: userTestData[4], // ねね
+      referenceCount: 7,
+      routineSaveCount: 5,
+    ),
   ];
 
   List<RoutineCardModel> get routineModel => post;
