@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import './routin_post.dart';
-import 'package:agemoti/testData/routine_test.dart';
 import '../components/card.dart';
-import '../../model/routine/routine_model.dart';
 import '../../const/color.dart';
-import '../../testData/user_test.dart';
-import '../../model/user/user_account.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../model/routine/routine_card.dart';

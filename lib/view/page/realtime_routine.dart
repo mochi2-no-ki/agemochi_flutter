@@ -1,17 +1,16 @@
 //リアルタイムルーティーン画面
-import 'package:agemoti/model/user/user_account.dart';
-import 'package:agemoti/testData/user_controller.dart';
-import 'package:agemoti/view/components/userInfo.dart';
+
+//TODO:API
+import '../../testData/user_test.dart';
+// import 'package:agemoti/view/components/userInfo.dart';
 import 'package:flutter/material.dart';
 
 import 'package:agemoti/model/message/message.dart';
-
-import 'package:agemoti/testData/user_controller.dart';
-import 'package:agemoti/testData/routine_controller.dart';
+// import '../../testData/routine_test.dart';
 import 'package:agemoti/testData/realtime_routine_controller.dart';
 import 'package:agemoti/testData/realtime_routine_participants_controller.dart';
 import 'package:agemoti/testData/message_controller.dart';
-import '../../model/routine/routine_model.dart';
+// import '../../model/routine/routine_model.dart';
 
 class RealtimeRoutine extends StatefulWidget {
   RealtimeRoutine({super.key});
@@ -21,9 +20,9 @@ class RealtimeRoutine extends StatefulWidget {
 }
 
 class _RealtimeRoutineState extends State<RealtimeRoutine> {
-  final MyprofileController _myprofileController = MyprofileController();
-  final UserController _userController = UserController();
-  final RoutineController _routineController = RoutineController();
+  final UserTest _myprofileController = UserTest();
+  final UserTest _userController = UserTest();
+  // final CardController _routineController = CardController();
   final RealtimeRoutineController _realtimeroutineController =
       RealtimeRoutineController();
   final RealtimeRoutineParticipantsController _participantsController =
@@ -43,6 +42,7 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
 
   @override
   Widget build(BuildContext context) {
+    //確認：
     // ーーーーーーーー仮データ取得ーーーーーーーーー
     // 自分の情報取得
     final profile_user = _myprofileController.posts;
@@ -55,7 +55,9 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
     // 参加者の情報を取得
     final participants = _participantsController.rr_participants
         .where((p) => p.realtimeRoutineId == target_rr.realtimeRoutineId)
-        // .map((p) => _userController.userController.firstWhere((u) => u.userId == p.userId, orElse: () => UserAccountModel.fallback(p.userId)))
+        // .map((p) => _userController.userController.firstWhere(
+        //     (u) => u.userId == p.userId,
+        //     orElse: () => UserAccountModel.fallback(p.userId)))
         .map((p) => _userController.userController
             .firstWhere((u) => u.userId == p.userId))
         .toList();
@@ -82,7 +84,7 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
               Row(children: [
                 const Text('主催者', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 12),
-                CircleAvatar(radius: 24, child: owner.userImgPath),
+                CircleAvatar(radius: 24, child: Image.asset(owner.userImgPath)),
                 const SizedBox(width: 8),
                 Text(owner.mochiId, style: const TextStyle(fontSize: 18))
               ]),
@@ -101,7 +103,7 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: CircleAvatar(
                             radius: 20,
-                            child: profile_user.userImgPath,
+                            child: Image.asset(profile_user.userImgPath),
                           ),
                         ),
                         // 自分、主催者を除く参加者たち
@@ -110,7 +112,7 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
                                   const EdgeInsets.symmetric(horizontal: 4),
                               child: CircleAvatar(
                                 radius: 20,
-                                child: u.userImgPath,
+                                // TODO:child: Image.asset(u.),
                               ),
                             )),
                       ],
@@ -195,7 +197,9 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
                         children: [
                           Stack(
                             children: [
-                              CircleAvatar(radius: 20, child: user.userImgPath),
+                              CircleAvatar(
+                                  radius: 20,
+                                  child: Image.asset(profile_user.userImgPath)),
                             ],
                           ),
                           const SizedBox(width: 8),
