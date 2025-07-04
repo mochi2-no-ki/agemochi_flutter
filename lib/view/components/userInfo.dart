@@ -1,11 +1,10 @@
 //ユーザーアイコン userID username
 
 import 'package:flutter/material.dart';
-import '../../model/routine/routine_model.dart';
-import '../../model/user/user_account.dart';
+import '../../model/user/user_Info.dart';
 
 class UserInfo extends StatelessWidget {
-  final RoutineCardModel post;
+  final UserInfoModel post;
 
   const UserInfo({
     super.key,
@@ -15,27 +14,15 @@ class UserInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Image.asset('${post.user.userImgPath}'),
-      title: Text(post.user.userName),
-      subtitle: Text('@${post.user.mochiId}'),
-    );
-  }
-}
-
-class MyInfo extends StatelessWidget {
-  final UserAccountModel myAccount;
-
-  const MyInfo({
-    super.key,
-    required this.myAccount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Image.asset('${myAccount.userImgPath}'),
-      title: Text(myAccount.userName),
-      subtitle: Text('@${myAccount.mochiId}'),
+      //TODO:写真入れ替える
+      leading: Image.asset('assets/icon/icon1.png'),
+      // CircleAvatar(
+      //   backgroundImage: NetworkImage(
+      //     'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io${post.userImgPath}',
+      //   ),
+      // ),
+      title: Text(post.userName),
+      subtitle: Text('@${post.mochiId}'),
     );
   }
 }

@@ -43,7 +43,10 @@ class TextFieldComponents extends StatelessWidget {
 //タグField
 class TagFieldComponents extends StatefulWidget {
   final String tagname;
-  const TagFieldComponents({super.key, required this.tagname});
+  const TagFieldComponents({
+    super.key,
+    required this.tagname,
+  });
 
   @override
   State<TagFieldComponents> createState() => _TagFieldComponentsState();
@@ -60,7 +63,7 @@ class _TagFieldComponentsState extends State<TagFieldComponents> {
             '#',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 25,
+              fontSize: 30,
               color: ColorConst.tag,
             ),
           ),
@@ -68,7 +71,7 @@ class _TagFieldComponentsState extends State<TagFieldComponents> {
             widget.tagname,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 25,
+              fontSize: 30,
             ),
           ),
         ],
@@ -184,14 +187,12 @@ class _TimePickerComponenetsState extends State<TimePickerComponenets> {
           color: ColorConst.icon,
         ),
         Text(widget.lavel),
-        HorizontalSpacer(
-          ratio: 0.1,
-        ),
+        const HorizontalSpacer(ratio: 0.1),
         ElevatedButton(
           onPressed: _showCupertinoTimePicker,
           child: Text(
             '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}',
-            style: TextStyle(fontSize: 24, color: Colors.black),
+            style: TextStyle(fontSize: 30, color: Colors.black),
           ),
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

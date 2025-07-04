@@ -6,6 +6,9 @@ import '../../model/routine/routine_model.dart';
 import '../../const/color.dart';
 import '../../testData/user_test.dart';
 import '../../model/user/user_account.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../model/routine/routine_card.dart';
 
 class Home extends StatefulWidget {
   Home({
@@ -17,14 +20,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final CardController _routineController = CardController();
-  final myAccount = UserTest().myController;
+  Future<List<RoutineCardModel>> fetchRoutineList() async {
+    final url = Uri.parse(
+        'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/routine/list');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      final routineList = RoutineListResponse.fromJson(jsonData);
+      return routineList.routines;
+    } else {
+      throw Exception('ルーティーン一覧の取得に失敗しました');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Column(
           children: [
@@ -35,7 +50,7 @@ class _HomeState extends State<Home> {
                   Positioned(
                     top: height * 0.85,
                     left: width * 0.7,
-                    child: _createButton(myAccount),
+                    child: _createButton(),
                   ),
                 ],
               ),
@@ -47,31 +62,42 @@ class _HomeState extends State<Home> {
   }
 
   Widget _card() {
-    final List<RoutineCardModel> posts = _routineController.post;
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      padding: const EdgeInsets.all(8.0),
-      itemCount: posts.length,
-      itemBuilder: (context, index) {
-        final routine = posts[index];
-
-        return RoutineCard(
-          index: index,
-          post: routine,
-        );
+    return FutureBuilder<List<RoutineCardModel>>(
+      future: fetchRoutineList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('エラーが発生しました'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('ルーティーンがありません'));
+        } else {
+          final posts = snapshot.data!;
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+            ),
+            padding: const EdgeInsets.all(8.0),
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              return RoutineCard(
+                index: index,
+                post: posts[index],
+              );
+            },
+          );
+        }
       },
     );
   }
 
-  Widget _createButton(UserAccountModel myAccount) {
+  Widget _createButton() {
     return ElevatedButton(
       onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RoutinePost(myAccount: myAccount),
+            builder: (context) => RoutinePost(),
           ),
         );
       },

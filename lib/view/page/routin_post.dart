@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import '../components/userInfo.dart';
 import '../../const/color.dart';
 import '../../const/dimens.dart';
-import '../../model/user/user_account.dart';
 import '../components/elevatedButton.dart';
 import '../components/field.dart';
 
 class RoutinePost extends StatefulWidget {
-  final UserAccountModel myAccount;
-
-  const RoutinePost({super.key, required this.myAccount});
+  const RoutinePost({
+    super.key,
+  });
 
   @override
   State<RoutinePost> createState() => _RoutinePostState();
@@ -55,7 +54,7 @@ class _RoutinePostState extends State<RoutinePost> {
             children: [
               Container(
                 width: width * 0.8,
-                child: MyInfo(myAccount: widget.myAccount),
+                // child: UserInfo(post: )
               ),
               VerticalSpacer(ratio: 0.01),
 
