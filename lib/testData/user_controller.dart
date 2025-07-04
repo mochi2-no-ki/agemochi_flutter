@@ -5,21 +5,43 @@ import 'package:flutter/cupertino.dart';
 import '../model/user/user_account.dart';
 
 class MyprofileController {
+  // final UserAccountModel posts = UserAccountModel(
+  //   userId: 'a1',
+  //   mochiId: 'miumiu',
+  //   userName: 'ちゃんみー',
+  //   userImgPath: Image.asset('icon/icon2.png'),
+  //   introduction: const Text('よろしくお願いいたします！'),
+  //   currentUserBannerId: 'currentUserBannerId',
+  //   currentIconFrameId: 'currentIconFrameId',
+  //   createdAt: DateTime(2025, 06, 21),
+  //   updatedAt: DateTime(2025, 06, 28),
+  // );
   final UserAccountModel posts = UserAccountModel(
-    userId: 'a1',
-    mochiId: 'miumiu',
-    userName: 'ちゃんみー',
-    userImgPath: Image.asset('icon/icon2.png'),
-    introduction: const Text('よろしくお願いいたします！'),
+    userId: 'c1',
+    mochiId: 'hare_hare',
+    userName: '太陽',
+    userImgPath: Image.asset('icon/icon3.png'),
+    introduction: const Text('頑張りまーす'),
     currentUserBannerId: 'currentUserBannerId',
     currentIconFrameId: 'currentIconFrameId',
-    createdAt: DateTime(2025, 06, 21),
-    updatedAt: DateTime(2025, 06, 28),
+    createdAt: DateTime(2025, 07, 21),
+    updatedAt: DateTime(2025, 07, 29),
   );
 }
 
 class UserController {
   final List<UserAccountModel> _posts = [
+    UserAccountModel(
+      userId: 'a1',
+      mochiId: 'miumiu',
+      userName: 'ちゃんみー',
+      userImgPath: Image.asset('icon/icon2.png'),
+      introduction: const Text('よろしくお願いいたします！'),
+      currentUserBannerId: 'currentUserBannerId',
+      currentIconFrameId: 'currentIconFrameId',
+      createdAt: DateTime(2025, 06, 21),
+      updatedAt: DateTime(2025, 06, 28),
+    ),
     UserAccountModel(
       userId: 'b1',
       mochiId: 'ta_ma',
@@ -31,12 +53,23 @@ class UserController {
       createdAt: DateTime(2025, 06, 21),
       updatedAt: DateTime(2025, 06, 29),
     ),
+    // UserAccountModel(
+    //   userId: 'c1',
+    //   mochiId: 'hare_hare',
+    //   userName: '太陽',
+    //   userImgPath: Image.asset('icon/icon3.png'),
+    //   introduction: const Text('頑張りまーす'),
+    //   currentUserBannerId: 'currentUserBannerId',
+    //   currentIconFrameId: 'currentIconFrameId',
+    //   createdAt: DateTime(2025, 07, 21),
+    //   updatedAt: DateTime(2025, 07, 29),
+    // ),
     UserAccountModel(
-      userId: 'c1',
-      mochiId: 'hare_hare',
-      userName: '太陽',
-      userImgPath: Image.asset('icon/icon3.png'),
-      introduction: const Text('頑張りまーす'),
+      userId: 'd1',
+      mochiId: 'ku_ro',
+      userName: '黒子',
+      userImgPath: Image.asset('icon/icon4.png'),
+      introduction: const Text('ちりつも'),
       currentUserBannerId: 'currentUserBannerId',
       currentIconFrameId: 'currentIconFrameId',
       createdAt: DateTime(2025, 07, 21),

@@ -42,6 +42,19 @@ class RoutineController {
       updateAt: DateTime.parse("2025-06-03"),
       deleteAt: DateTime.parse("2025-06-03"),
     ),
+    RoutineModel(
+      routineId: 'c1-1',
+      userId: 'c1',
+      routineTitle: 'にんじん生活',
+      routineStart: DateTime.parse("2025-06-03T16:00:00"),
+      routineEnd: DateTime.parse("2025-06-03T18:00:00"),
+      routineTime: 1,
+      routineBody: 'data',
+      realtimeRoutineFlag: true,
+      createAt: DateTime.parse("2025-06-03"),
+      updateAt: DateTime.parse("2025-06-03"),
+      deleteAt: DateTime.parse("2025-06-03"),
+    ),
   ];
 
   List<RoutineModel> get routineModel => _post;
