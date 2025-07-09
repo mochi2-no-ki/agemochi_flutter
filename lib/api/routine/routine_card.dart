@@ -1,7 +1,27 @@
-import '../../model/routine/routine_card.dart';
+//【API】ルーティーン一覧を取得する
 import 'package:http/http.dart' as http;
-
 import 'dart:convert';
+
+//url
+import '../../const/api_url.dart';
+
+//model
+import '../../model/routine/routine_card.dart';
+
+/// 取得する情報--
+/// *sort
+/// *表現提案
+/// *search
+/// *rr(リアルタイムルーティーンかどうかのフラグ)
+/// *time(ルーティーンの所要時間)
+/// *start(ルーティーンが始まる時間)
+/// *end(ルーティーンが終わる時間)
+/// *user(指定されたmochi_id)
+/// --
+/// メソッド : GET
+/// パスパラメータ : routine_id(routineテーブルのroutine_id)
+/// クエリパラメータ : offset sort search rr time start end user
+/// リクエストボディ : なし
 
 Future<RoutineListResponse> fetchRoutineList({
   int offset = 0,
@@ -13,8 +33,8 @@ Future<RoutineListResponse> fetchRoutineList({
   String? end,
   String? user,
 }) async {
-  const baseUrl =
-      'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/routine/list';
+  final url = ApiUrl.routineList();
+
   final queryParameters = <String, String>{
     'offset': offset.toString(),
     'sort': sort,
@@ -27,12 +47,12 @@ Future<RoutineListResponse> fetchRoutineList({
   if (end != null) queryParameters['end'] = end;
   if (user != null) queryParameters['user'] = user;
 
-  final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+  final uri = Uri.parse(url).replace(queryParameters: queryParameters);
 
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {
-    print("ルーティーンカード 200");
+    print("【API】ルーティーンカード 200");
     final jsonData = jsonDecode(response.body);
     return RoutineListResponse.fromJson(jsonData);
   } else {

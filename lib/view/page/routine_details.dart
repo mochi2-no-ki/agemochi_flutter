@@ -1,49 +1,59 @@
 //ルーティーン詳細
-import 'package:agemoti/view/components/userInfo.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+///const
 import '../../const/color.dart';
 import '../../const/dimens.dart';
-import '../components/elevatedButton.dart';
+
+///component
+import 'package:agemoti/view/components/userInfo.dart';
 import '../components/field.dart';
+
+///page
+import '../page/realtime_routine.dart';
+
+///model
 import '../../model/routine/routine_detail.dart';
 
+///api
+import '../../api/routine/routine_detail.dart';
+
 class RoutineDetail extends StatefulWidget {
+  final String cardId;
   const RoutineDetail({
     super.key,
+    required this.cardId,
   });
 
-  @override
+  // @override
   State<RoutineDetail> createState() => _RoutineDetailState();
 }
 
 class _RoutineDetailState extends State<RoutineDetail> {
-  final TextEditingController _titleController = TextEditingController();
+  // final TextEditingController _titleController = TextEditingController();
   RoutineDetailModel? routine;
+  String? rrID;
+
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchRoutineDetail();
+    _loadRoutine();
   }
 
-  Future<void> fetchRoutineDetail() async {
-    final url = Uri.parse(
-        'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/routine/01979b96-757b-7c70-b405-4d46c91a4f04/detail');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      print("UI画面200!!!!!!!!!!!!");
-      final jsonData = jsonDecode(response.body);
-      final data = RoutineDetailModel.fromJson(jsonData['data']);
+  Future<void> _loadRoutine() async {
+    try {
+      final data = await fetchRoutineDetail(widget.cardId);
       setState(() {
-        routine = data;
+        routine = RoutineDetailModel.fromJson(data);
         isLoading = false;
       });
-    } else {
-      print("API取得失敗: ${response.statusCode}");
+    } catch (e) {
+      print('データ取得失敗: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -51,8 +61,9 @@ class _RoutineDetailState extends State<RoutineDetail> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
+    ///API取得失敗やnullの場合の表示
     if (routine == null) {
-      // API取得失敗やnullの場合の表示
       return Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(height * 0.08),
@@ -98,38 +109,48 @@ class _RoutineDetailState extends State<RoutineDetail> {
           child: Column(
             children: [
               Container(
-                  width: width * 0.8, child: UserInfo(post: routine!.user)),
+                width: width * 0.8,
+                child: UserInfo(
+                  post: routine!.user,
+                  testImg: 'assets/icon/icon9.png',
+                ),
+              ),
               const VerticalSpacer(ratio: 0.01),
-
               Text(
                 routine!.routineTitle,
-                style: const TextStyle(fontSize: 40),
+                style: const TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const VerticalSpacer(),
-
-              //確認:Rowにしたらtagが長いとき、折り返されてUIが崩れるためColumnに変更
               Container(
                 alignment: Alignment.center,
-                width: width * 0.8,
-                child: const Column(
+                width: width * 0.7,
+                child: Column(
                   children: [
-                    //TODO:ここ編集する
-                    TagFieldComponents(tagname: 'tag'),
-                    VerticalSpacer(ratio: 0.01),
-                    TagFieldComponents(tagname: 'tag'),
-                    VerticalSpacer(ratio: 0.01),
-                    TagFieldComponents(tagname: 'tag'),
+                    ...routine!.tags.map((tag) {
+                      return Column(
+                        children: [
+                          TagFieldComponents(
+                            tagname: tag,
+                            fontSize: 25,
+                          ),
+                          const VerticalSpacer(ratio: 0.01),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
               const VerticalSpacer(),
-
+              //TODO:ピッカー変える
               Container(
-                // child: TimePickerComponenets(
-                //   icon: Icons.timer,
-                //   lavel: '所要時間',
-                // ),
-                child: Text(routine!.routineTime.toString()),
+                child: TimePickerComponenets(
+                  icon: Icons.timer,
+                  lavel: '所要時間',
+                ),
+                // child: Text(routine!.routineTime.toString()),
               ),
               const VerticalSpacer(),
               Container(
@@ -143,7 +164,51 @@ class _RoutineDetailState extends State<RoutineDetail> {
                 width: width * 0.8,
                 child: Text(
                   routine!.routineBody,
+                  style: TextStyle(fontSize: 25),
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: _joinButton(),
+    );
+  }
+
+  Widget _joinButton() {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RealtimeRoutine(
+              routine: routine,
+            ),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(10),
+        backgroundColor: ColorConst.bt,
+        elevation: 4,
+      ),
+      child: const SizedBox(
+        width: 80,
+        height: 80,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                '参加',
+                style: TextStyle(color: ColorConst.swout),
+              ),
+              SizedBox(height: 4),
+              Icon(
+                Icons.local_fire_department_rounded,
+                size: 40,
+                color: ColorConst.swout,
               ),
             ],
           ),

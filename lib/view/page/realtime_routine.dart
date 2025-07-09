@@ -1,247 +1,235 @@
 //リアルタイムルーティーン画面
-
-//TODO:API
-import '../../testData/user_test.dart';
-// import 'package:agemoti/view/components/userInfo.dart';
 import 'package:flutter/material.dart';
 
-import 'package:agemoti/model/message/message.dart';
-// import '../../testData/routine_test.dart';
-import 'package:agemoti/testData/realtime_routine_controller.dart';
-import 'package:agemoti/testData/realtime_routine_participants_controller.dart';
-import 'package:agemoti/testData/message_controller.dart';
-// import '../../model/routine/routine_model.dart';
+///const
+import 'package:agemoti/const/color.dart';
+
+///component
+import 'package:agemoti/view/components/userInfo.dart';
+import '../components/field.dart';
+
+///model
+import '../../model/routine/routine_detail.dart';
+import '../../model/message/message.dart';
+import '../../model/user/user_Info.dart';
+
+///api
+import '../../api/realtime_routine/chatHistory.dart';
+import '../../api/realtime_routine/participantId.dart';
+import '../../api/realtime_routine/rr_id.dart';
+
+///testdata
+import '../../testData/user_test.dart';
 
 class RealtimeRoutine extends StatefulWidget {
-  RealtimeRoutine({super.key});
+  final RoutineDetailModel? routine;
+
+  RealtimeRoutine({
+    super.key,
+    required this.routine,
+  });
 
   @override
   State<RealtimeRoutine> createState() => _RealtimeRoutineState();
 }
 
 class _RealtimeRoutineState extends State<RealtimeRoutine> {
+  final UserTests _userIcon = UserTests();
   final UserTest _myprofileController = UserTest();
-  final UserTest _userController = UserTest();
-  // final CardController _routineController = CardController();
-  final RealtimeRoutineController _realtimeroutineController =
-      RealtimeRoutineController();
-  final RealtimeRoutineParticipantsController _participantsController =
-      RealtimeRoutineParticipantsController();
 
   final TextEditingController _textEditingController = TextEditingController();
-
-  final MessageController _messageController = MessageController();
-
-  final List<String> myMessages = [];
+  late List<Message> chatMessages = [];
+  List<UserInfoModel> participantUserList = [];
 
   @override
   void initState() {
     super.initState();
-    // 今後API取得処理をここに記述予定
+    _loadRealtimeRoutineAndParticipants();
+  }
+
+  Future<void> _loadRealtimeRoutineAndParticipants() async {
+    try {
+      final rrData = await fetchRRid(widget.routine!.routineId);
+      final rrRoutineId = rrData['realtime_routine_id'];
+
+      ///参加者の取得
+      final participants = await fetchParticipantList(rrRoutineId);
+
+      ///チャット履歴の取得
+      final messages = await fetchChatHistory(
+        '01979b96-757b-7c70-b405-4d46c91a4f04',
+        offset: 0,
+        mochiId: 'miumiu',
+      );
+
+      setState(() {
+        participantUserList = participants; //参加者
+        chatMessages = messages; //チャット
+      });
+    } catch (e) {
+      print('エラー: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //確認：
-    // ーーーーーーーー仮データ取得ーーーーーーーーー
-    // 自分の情報取得
-    final profile_user = _myprofileController.posts;
-    // 参加するルーティーンの情報を取得
-    final target_rr = _realtimeroutineController.realtimeRoutine
-        .firstWhere((r) => r.realtimeRoutineId == 'b1-rr-1');
-    // 主催者の情報を取得
-    final owner = _userController.userController
-        .firstWhere((u) => u.userId == target_rr.ownerUserId);
-    // 参加者の情報を取得
-    final participants = _participantsController.rr_participants
-        .where((p) => p.realtimeRoutineId == target_rr.realtimeRoutineId)
-        // .map((p) => _userController.userController.firstWhere(
-        //     (u) => u.userId == p.userId,
-        //     orElse: () => UserAccountModel.fallback(p.userId)))
-        .map((p) => _userController.userController
-            .firstWhere((u) => u.userId == p.userId))
-        .toList();
-    // メッセージ情報取得
-    final messages = _messageController.message;
+    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(245, 245, 245, 1),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(height * 0.08),
+        child: AppBar(
+          backgroundColor: ColorConst.bk,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: ColorConst.bt,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Center(
+            child: Text(widget.routine!.routineTitle,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                )),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ルーティーンタイトル表示
-              Center(
-                  child: Text(target_rr.realtimeRoutineTitle,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ))),
-              // 主催者情報表示
+              Center(),
               const SizedBox(height: 20),
               Row(children: [
-                const Text('主催者', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: 12),
-                CircleAvatar(radius: 24, child: Image.asset(owner.userImgPath)),
-                const SizedBox(width: 8),
-                Text(owner.mochiId, style: const TextStyle(fontSize: 18))
+                Text(
+                  '主催者',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: UserInfo(
+                    post: widget.routine!.user,
+                    testImg: 'assets/icon/icon9.png',
+                    //下が正しい
+                    // testImg: widget.routine!.user.userImgPath,
+                  ),
+                ),
               ]),
-              // 参加者情報表示
               const SizedBox(height: 20),
               Row(children: [
-                const Text('参加者', style: TextStyle(fontSize: 16)),
+                const Text(
+                  '参加者',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        // 自分（profile_user）のアイコン
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: CircleAvatar(
-                            radius: 20,
-                            child: Image.asset(profile_user.userImgPath),
-                          ),
+                        //TODO:Test書き換える
+                        UserIcon(img: UserTest().posts.userImgPath),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
                         ),
-                        // 自分、主催者を除く参加者たち
-                        ...participants.map((u) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: CircleAvatar(
-                                radius: 20,
-                                // TODO:child: Image.asset(u.),
-                              ),
-                            )),
+                        //TODO:"assets//img/kuro.png"になってる
+                        // ...participantUserList.map(
+                        //   (icon) {
+                        //     // return UserIcon(img: icon.userImgPath);
+                        //   },
+                        // ),
+                        ..._userIcon.testUsers.map((icon) {
+                          return UserIcon(img: icon.userImgPath);
+                        })
                       ],
                     ),
                   ),
                 ),
               ]),
-              // 開始時間
               const SizedBox(height: 20),
-              Row(children: [
-                const Text('開始時間', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: 20),
-                Text(
-                    '${target_rr.startTime.hour}：${target_rr.startTime.minute.toString().padLeft(2, '0')} ~',
-                    style: const TextStyle(fontSize: 18))
-              ]),
-              const SizedBox(height: 24),
+
+              const TimePickerComponenets(
+                icon: Icons.watch_later_outlined,
+                lavel: '開始時間',
+              ),
+              const SizedBox(height: 20),
+              //TODO:ほかの時間のconstも作る
               Center(
                 child: Text(
-                  target_rr.realtimeStatusId == '1'
-                      ? 'よろしくタイム'
-                      : target_rr.realtimeStatusId == '2'
-                          ? '参加中'
-                          : target_rr.realtimeStatusId == '3'
-                              ? 'ありがとうタイム'
-                              : '',
+                  'よろしくタイム',
                   style:
                       const TextStyle(fontSize: 22, color: Colors.deepOrange),
                 ),
               ),
+              const SizedBox(height: 20),
+
+              ///メッセージ欄
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: messages.length,
+                  itemCount: chatMessages.length,
                   itemBuilder: (context, index) {
-                    final msg = messages[index];
-                    final isMe = msg.userId == profile_user.userId;
-                    final isOwner = msg.userId == owner.userId;
-                    final user = isMe
-                        ? profile_user
-                        : isOwner
-                            ? owner
-                            : participants.firstWhere(
-                                (u) => u.userId == msg.userId,
-                              );
-
-                    if (isMe) {
-                      // 自分のメッセージ：右側に表示
-                      return Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          padding: const EdgeInsets.all(12),
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width * 0.7),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                                color: const Color.fromARGB(255, 209, 78, 47)),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              bottomLeft: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                offset: Offset(2, 2),
-                                blurRadius: 4,
-                              )
-                            ],
+                    final msg = chatMessages[index];
+                    final isMe =
+                        msg.mochiId == _myprofileController.posts.mochiId;
+                    return Align(
+                      alignment:
+                          isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 14),
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.7),
+                        decoration: BoxDecoration(
+                          color: isMe ? Colors.orange[100] : ColorConst.chatYou,
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(16),
+                            topRight: const Radius.circular(16),
+                            bottomLeft:
+                                isMe ? const Radius.circular(16) : Radius.zero,
+                            bottomRight:
+                                isMe ? Radius.zero : const Radius.circular(16),
                           ),
-                          child: Text(msg.messageBody,
-                              style: const TextStyle(fontSize: 16)),
                         ),
-                      );
-                    } else {
-                      // 他者のメッセージ：左側に表示
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                  radius: 20,
-                                  child: Image.asset(profile_user.userImgPath)),
-                            ],
-                          ),
-                          const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(user.mochiId,
-                                  style: const TextStyle(fontSize: 14)),
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                padding: const EdgeInsets.all(12),
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                      color: const Color.fromARGB(
-                                          255, 209, 78, 47)),
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(0),
-                                    topRight: Radius.circular(16),
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      offset: Offset(2, 2),
-                                      blurRadius: 4,
-                                    )
-                                  ],
-                                ),
-                                child: Text(msg.messageBody,
-                                    style: const TextStyle(fontSize: 16)),
+                        child: Column(
+                          crossAxisAlignment: isMe
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            if (msg.replyMochiId.isNotEmpty)
+                              Text(
+                                '↪ ${msg.replyMochiId}',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.grey[700]),
                               ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }
+                            Text(
+                              msg.messageBody,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${msg.createdAt.hour}:${msg.createdAt.minute.toString().padLeft(2, '0')}',
+                              style: TextStyle(
+                                  fontSize: 10, color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -249,53 +237,50 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
           ),
         ),
       ),
-      //メッセージ送信エリア
       bottomNavigationBar: Padding(
-        // padding: const EdgeInsets.all(8.0),
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 48), // 下に24の余白
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _textEditingController,
-                decoration: InputDecoration(
-                  hintText: 'メッセージを入力',
-                  filled: true,
-                  fillColor: Colors.orange[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 48),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _textEditingController,
+                  decoration: InputDecoration(
+                    hintText: 'メッセージを入力',
+                    filled: true,
+                    fillColor: Colors.orange[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
               ),
-            ),
-            IconButton(
-              icon: Icon(Icons.send, color: Colors.orange),
-              onPressed: () {
-                final text = _textEditingController.text.trim();
-                if (text.isNotEmpty) {
-                  setState(() {
-                    // 自分のuserIdを使って新しいメッセージを作成し、controllerに追加
-                    _messageController.message.add(
-                      Message(
-                        messageId: DateTime.now()
-                            .millisecondsSinceEpoch
-                            .toString(), // 一時的なID
-                        userId: profile_user.userId,
-                        messageTypeId: '1',
-                        messageBody: text,
-                        replyUserId: '',
-                        createdAt: DateTime.now(),
-                      ),
-                    );
-                  });
-                  _textEditingController.clear();
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+              IconButton(
+                icon: Icon(Icons.send, color: Colors.orange),
+                onPressed: () {
+                  final text = _textEditingController.text.trim();
+                  if (text.isNotEmpty) {
+                    setState(() {
+                      // 自分のuserIdを使って新しいメッセージを作成し、controllerに追加
+                      // _messageController.message.add(
+                      //   Message(
+                      //     messageId: DateTime.now()
+                      //         .millisecondsSinceEpoch
+                      //         .toString(), // 一時的なID
+                      //     userId: profile_user.userId,
+                      //     messageTypeId: '1',
+                      //     messageBody: text,
+                      //     replyUserId: '',
+                      //     createdAt: DateTime.now(),
+                      //   ),
+                      // );
+                    });
+                    _textEditingController.clear();
+                  }
+                },
+              ),
+            ],
+          )),
     );
   }
 }

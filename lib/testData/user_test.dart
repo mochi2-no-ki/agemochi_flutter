@@ -1,81 +1,68 @@
 //[test]ユーザー情報
 
-import 'package:flutter/cupertino.dart';
-
-import '../model/user/user_account.dart';
+import '../model/user/user_Info.dart';
 
 class UserTest {
-  //自分のアカウント
-  final UserAccountModel posts = UserAccountModel(
-    userId: 'a1',
+  final posts = UserInfoModel(
     mochiId: 'miumiu',
-    userName: 'ちゃんみー',
+    userName: 'みゆっち',
     userImgPath: 'assets/icon/icon2.png',
-    introduction: const Text('よろしくお願いいたします！'),
-    currentUserBannerId: 'currentUserBannerId',
-    currentIconFrameId: 'currentIconFrameId',
-    createdAt: DateTime(2025, 06, 21),
-    updatedAt: DateTime(2025, 06, 28),
   );
+  UserInfoModel get post => posts;
+}
 
-  final List<UserAccountModel> _posts = [
-    UserAccountModel(
-      userId: 'b1',
-      mochiId: 'ta_ma',
-      userName: '玉子',
-      userImgPath: 'icon/icon1.png',
-      introduction: const Text('よろしく！'),
-      currentUserBannerId: 'currentUserBannerId',
-      currentIconFrameId: 'currentIconFrameId',
-      createdAt: DateTime(2025, 06, 21),
-      updatedAt: DateTime(2025, 06, 29),
+class UserTests {
+  final List<UserInfoModel> testUsers = [
+    UserInfoModel(
+      mochiId: 'user01',
+      userName: 'Alice',
+      userImgPath: 'assets/icon/icon1.png',
     ),
-    UserAccountModel(
-      userId: 'c1',
-      mochiId: 'hare_hare',
-      userName: '太陽',
-      userImgPath: 'icon/icon3.png',
-      introduction: const Text('頑張りまーす'),
-      currentUserBannerId: 'currentUserBannerId',
-      currentIconFrameId: 'currentIconFrameId',
-      createdAt: DateTime(2025, 07, 21),
-      updatedAt: DateTime(2025, 07, 29),
+    UserInfoModel(
+      mochiId: 'user02',
+      userName: 'Bob',
+      userImgPath: 'assets/icon/icon3.png',
     ),
-    UserAccountModel(
-      userId: 'd1',
-      mochiId: 'yuki_pika',
-      userName: '雪',
+    UserInfoModel(
+      mochiId: 'user03',
+      userName: 'Charlie',
       userImgPath: 'assets/icon/icon4.png',
-      introduction: const Text('雪のように静かに燃えてます'),
-      currentUserBannerId: 'currentUserBannerId',
-      currentIconFrameId: 'currentIconFrameId',
-      createdAt: DateTime(2025, 07, 01),
-      updatedAt: DateTime(2025, 07, 10),
     ),
-    UserAccountModel(
-      userId: 'e1',
-      mochiId: 'hana_bi',
-      userName: '花火',
-      userImgPath: 'icon/icon4.png',
-      introduction: const Text('一瞬の輝きを全力で！'),
-      currentUserBannerId: 'currentUserBannerId',
-      currentIconFrameId: 'currentIconFrameId',
-      createdAt: DateTime(2025, 06, 15),
-      updatedAt: DateTime(2025, 06, 18),
+    UserInfoModel(
+      mochiId: 'user04',
+      userName: 'Dana',
+      userImgPath: 'assets/icon/icon5.png',
     ),
-    UserAccountModel(
-      userId: 'f1',
-      mochiId: 'nene_chan',
-      userName: 'ねね',
-      userImgPath: 'icon/icon4.png',
-      introduction: const Text('癒し担当です〜'),
-      currentUserBannerId: 'currentUserBannerId',
-      currentIconFrameId: 'currentIconFrameId',
-      createdAt: DateTime(2025, 05, 10),
-      updatedAt: DateTime(2025, 06, 05),
+    UserInfoModel(
+      mochiId: 'user05',
+      userName: 'Eric',
+      userImgPath: 'assets/icon/icon6.png',
+    ),
+    UserInfoModel(
+      mochiId: 'user06',
+      userName: 'Fiona',
+      userImgPath: 'assets/icon/icon7.png',
+    ),
+    UserInfoModel(
+      mochiId: 'user07',
+      userName: 'George',
+      userImgPath: 'assets/icon/icon8.png',
+    ),
+    UserInfoModel(
+      mochiId: 'user08',
+      userName: 'Hana',
+      userImgPath: 'assets/icon/icon9.png',
+    ),
+    UserInfoModel(
+      mochiId: 'user09',
+      userName: 'Ian',
+      userImgPath: 'assets/icon/icon1.png',
+    ),
+    UserInfoModel(
+      mochiId: 'user10',
+      userName: 'Jill',
+      userImgPath: 'assets/icon/icon3.png',
     ),
   ];
-
-  List<UserAccountModel> get userController => _posts;
-  UserAccountModel get myController => posts;
+  List<UserInfoModel> get post => testUsers;
 }

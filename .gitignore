@@ -42,3 +42,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# 環境変数ファイルを Git 管理から除外
+.env
+

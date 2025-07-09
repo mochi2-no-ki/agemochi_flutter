@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
-import './routin_post.dart';
-import '../components/card.dart';
+
+///const
 import '../../const/color.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+///component
+import 'package:agemoti/view/components/userInfo.dart';
+import '../components/card.dart';
+
+///page
+import '../../api/routine/routine_card.dart';
+
+///model
+import '../../model/user/user_Info.dart';
 import '../../model/routine/routine_card.dart';
 
+///api
+import './routin_post.dart';
+
 class Home extends StatefulWidget {
+  final UserInfoModel post;
   Home({
     super.key,
+    required this.post,
   });
 
   @override
@@ -16,59 +29,57 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Future<List<RoutineCardModel>> fetchRoutineList() async {
-    final url = Uri.parse(
-        'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/routine/list');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final routineList = RoutineListResponse.fromJson(jsonData);
-      return routineList.routines;
-    } else {
-      throw Exception('ルーティーン一覧の取得に失敗しました');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(),
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  _card(),
-                  Positioned(
-                    top: height * 0.85,
-                    left: width * 0.7,
-                    child: _createButton(),
+            Row(
+              children: [
+                Expanded(child: UserInfo(post: widget.post)),
+                Expanded(
+                  flex: 0,
+                  child: SizedBox(
+                    height: height * 0.05,
+                    width: width * 0.2,
+                    //TODO:higaht/width調整する
+                    child: IconButton(
+                        onPressed: () {
+                          //TODO:検索画面に遷移する処理書く
+                        },
+                        icon: Icon(
+                          Icons.search,
+                          color: ColorConst.bt,
+                        )),
                   ),
-                ],
-              ),
+                )
+              ],
+            ),
+            Expanded(
+              child: _card(),
             )
           ],
         ),
       ),
+      floatingActionButton: _createButton(),
     );
   }
 
   Widget _card() {
-    return FutureBuilder<List<RoutineCardModel>>(
+    return FutureBuilder<RoutineListResponse>(
       future: fetchRoutineList(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('エラーが発生しました'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('ルーティーンがありません'));
+          return const Center(child: Text('エラーが発生しました'));
+        } else if (!snapshot.hasData || snapshot.data!.routines.isEmpty) {
+          return const Center(child: Text('ルーティーンがありません'));
         } else {
-          final posts = snapshot.data!;
+          final posts = snapshot.data!.routines;
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
