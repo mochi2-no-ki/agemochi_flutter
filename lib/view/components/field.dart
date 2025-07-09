@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; //timepicker
+
+//const
 import '../../const/color.dart';
-import 'package:flutter/cupertino.dart';
 import '../../const/dimens.dart';
 
-//テキストField
+///model
+import '../../model/routine/routine_tag.dart'; //検索
+
+///api
+import '../../api/search/tag_search.dart'; //検索
+
+///テキストField
 class TextFieldComponents extends StatelessWidget {
   final TextEditingController? controller;
   final String? hintText;
@@ -40,12 +48,14 @@ class TextFieldComponents extends StatelessWidget {
   }
 }
 
-//タグField
+///タグField
 class TagFieldComponents extends StatefulWidget {
   final String tagname;
+  final double fontSize;
   const TagFieldComponents({
     super.key,
     required this.tagname,
+    this.fontSize = 20,
   });
 
   @override
@@ -57,21 +67,19 @@ class _TagFieldComponentsState extends State<TagFieldComponents> {
   Widget build(BuildContext context) {
     return Container(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             '#',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 30,
+              fontSize: widget.fontSize,
               color: ColorConst.tag,
             ),
           ),
           Text(
             widget.tagname,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 30,
+            style: TextStyle(
+              fontSize: widget.fontSize,
             ),
           ),
         ],
@@ -80,7 +88,7 @@ class _TagFieldComponentsState extends State<TagFieldComponents> {
   }
 }
 
-//検索Field
+///検索Field
 class SearchBarComponents extends StatefulWidget {
   const SearchBarComponents({super.key});
 
@@ -90,53 +98,96 @@ class SearchBarComponents extends StatefulWidget {
 
 class _SearchBarComponentsState extends State<SearchBarComponents> {
   final TextEditingController _controller = TextEditingController();
+  List<TagModel> _searchResults = [];
 
-  void _onSearch() {
-    final query = _controller.text;
-    print('検索tag: $query');
-    // TODO: 処理追加
+  void _onSearch() async {
+    final query = _controller.text.trim();
+    if (query.isEmpty) return;
+
+    final results = await fetchTagSearch(query);
+    setState(() {
+      _searchResults = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 0.5,
-                  offset: const Offset(1, 4),
+        // 検索バー
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 0.5,
+                      offset: const Offset(1, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                hintText: ' 検索 ',
-                border: InputBorder.none,
+                child: TextField(
+                  controller: _controller,
+                  onSubmitted: (_) => _onSearch(),
+                  decoration: const InputDecoration(
+                    hintText: ' 検索 ',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                ),
               ),
             ),
-          ),
+            const SizedBox(width: 8),
+            IconButton(
+              onPressed: _onSearch,
+              icon: const Icon(Icons.search, color: ColorConst.bt),
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        IconButton(
-          onPressed: _onSearch,
-          icon: const Icon(
-            Icons.search,
-            color: ColorConst.bt,
+
+        // 検索結果候補
+        if (_searchResults.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(1, 2),
+                  blurRadius: 4,
+                )
+              ],
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final tag = _searchResults[index];
+                return ListTile(
+                  title: Text(tag.tagName),
+                  onTap: () {
+                    print('選択されたタグ: ${tag.tagName}');
+                    // 必要に応じて _controller.text = tag.tagName;
+                  },
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }
 }
 
-//時間ピッカーField
+///時間ピッカーField
+///TODO時間反映させれてない
 class TimePickerComponenets extends StatefulWidget {
   final String lavel;
   final IconData icon;
@@ -185,8 +236,12 @@ class _TimePickerComponenetsState extends State<TimePickerComponenets> {
         Icon(
           widget.icon,
           color: ColorConst.icon,
+          size: 25,
         ),
-        Text(widget.lavel),
+        Text(
+          widget.lavel,
+          style: TextStyle(fontSize: 25),
+        ),
         const HorizontalSpacer(ratio: 0.1),
         ElevatedButton(
           onPressed: _showCupertinoTimePicker,

@@ -1,5 +1,8 @@
+//【model】routine_card
+
 import '../user/user_Info.dart';
 
+///routine_cardのレスポンス
 class RoutineListResponse {
   final int code;
   final String message;

@@ -1,15 +1,20 @@
 //PAGE:main
+import 'package:agemoti/model/user/user_Info.dart';
 import 'package:flutter/material.dart';
 
 import 'view/page/home.dart';
 import 'const/color.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'testData/user_test.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  await dotenv.load();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  UserInfoModel post = UserTest().post;
+  MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: ColorConst.bk,
       ),
-      home: Home(),
+      home: Home(post: post),
     );
   }
 }

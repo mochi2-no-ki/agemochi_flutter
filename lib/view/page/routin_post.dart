@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../components/userInfo.dart';
 import '../../const/color.dart';
 import '../../const/dimens.dart';
 import '../components/elevatedButton.dart';
