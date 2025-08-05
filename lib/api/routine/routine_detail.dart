@@ -24,7 +24,6 @@ Future<Map<String, dynamic>> fetchRoutineDetail(String routineId) async {
     if (response.statusCode == 200) {
       print("【API】ルーティーン詳細 200");
       final jsonData = jsonDecode(response.body);
-      print(response.body[1]);
       return jsonData['data'];
     } else {
       throw Exception('HTTPエラー: ${response.statusCode}');

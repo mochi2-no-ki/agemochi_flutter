@@ -9,6 +9,8 @@ import '../components/card.dart';
 
 ///page
 import '../../api/routine/routine_card.dart';
+import '../page/routine_serach.dart';
+import './profile.dart';
 
 ///model
 import '../../model/user/user_Info.dart';
@@ -34,21 +36,38 @@ class _HomeState extends State<Home> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: ColorConst.bk,
       body: SafeArea(
         child: Column(
           children: [
             Row(
               children: [
-                Expanded(child: UserInfo(post: widget.post)),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Profile(),
+                        ),
+                      );
+                    },
+                    child: UserInfo(post: widget.post),
+                  ),
+                ),
                 Expanded(
                   flex: 0,
                   child: SizedBox(
                     height: height * 0.05,
                     width: width * 0.2,
-                    //TODO:higaht/width調整する
                     child: IconButton(
                         onPressed: () {
-                          //TODO:検索画面に遷移する処理書く
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RoutineSearch(),
+                            ),
+                          );
                         },
                         icon: Icon(
                           Icons.search,
@@ -104,18 +123,18 @@ class _HomeState extends State<Home> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RoutinePost(),
+            builder: (context) => const RoutinePost(),
           ),
         );
       },
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(16),
         backgroundColor: ColorConst.bt,
         foregroundColor: Colors.white,
-        elevation: 6,
+        elevation: 4,
       ),
-      child: const Icon(Icons.add, size: 30),
+      child: const Icon(Icons.add, size: 20),
     );
   }
 }

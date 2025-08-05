@@ -47,8 +47,9 @@ Future<RoutineListResponse> fetchRoutineList({
   if (end != null) queryParameters['end'] = end;
   if (user != null) queryParameters['user'] = user;
 
-  final uri = Uri.parse(url).replace(queryParameters: queryParameters);
-
+  final uri = Uri.parse(url);
+  // .replace(queryParameters: queryParameters);
+  print('uri:$uri');
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {

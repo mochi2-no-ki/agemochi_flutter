@@ -58,6 +58,7 @@ class _RoutineCardState extends State<RoutineCard> {
             ),
           ),
         );
+        print('カードID:${widget.post.routineId}');
       },
       child: Card(
         color: ColorConst.card,

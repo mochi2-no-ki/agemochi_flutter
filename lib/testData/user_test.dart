@@ -4,8 +4,8 @@ import '../model/user/user_Info.dart';
 
 class UserTest {
   final posts = UserInfoModel(
-    mochiId: 'miumiu',
-    userName: 'みゆっち',
+    mochiId: 'ta_ma',
+    userName: '玉子',
     userImgPath: 'assets/icon/icon2.png',
   );
   UserInfoModel get post => posts;

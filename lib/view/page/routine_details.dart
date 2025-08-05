@@ -126,7 +126,7 @@ class _RoutineDetailState extends State<RoutineDetail> {
               const VerticalSpacer(),
               Container(
                 alignment: Alignment.center,
-                width: width * 0.7,
+                width: width * 0.15,
                 child: Column(
                   children: [
                     ...routine!.tags.map((tag) {
@@ -134,7 +134,7 @@ class _RoutineDetailState extends State<RoutineDetail> {
                         children: [
                           TagFieldComponents(
                             tagname: tag,
-                            fontSize: 25,
+                            fontSize: 20,
                           ),
                           const VerticalSpacer(ratio: 0.01),
                         ],
@@ -145,26 +145,79 @@ class _RoutineDetailState extends State<RoutineDetail> {
               ),
               const VerticalSpacer(),
               //TODO:ピッカー変える
-              Container(
-                child: TimePickerComponenets(
-                  icon: Icons.timer,
-                  lavel: '所要時間',
-                ),
-                // child: Text(routine!.routineTime.toString()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    '所要時間　',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.timer_outlined,
+                    color: Colors.deepOrange,
+                  ),
+                  Text(
+                    '${routine!.routineTime.toString()}分',
+                    style: TextStyle(
+                      fontSize: 28,
+                      // fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
+
               const VerticalSpacer(),
-              Container(
-                child: TimePickerComponenets(
-                  icon: Icons.av_timer_outlined,
-                  lavel: '時間帯',
-                ),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '時間帯　　',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Icon(
+                    Icons.watch_later_outlined,
+                    color: Colors.deepOrange,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        '開始  18:00',
+                        style: TextStyle(
+                          fontSize: 28,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '終了  19:30',
+                        style: TextStyle(
+                          fontSize: 28,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  )
+
+                  // Text('${routine!.routineStart.toString()}'),
+                ],
               ),
+              // Container(
+              //   child: TimePickerComponenets(
+              //     icon: Icons.av_timer_outlined,
+              //     lavel: '時間帯',
+              //   ),
+              // ),
               const VerticalSpacer(),
               Container(
                 width: width * 0.8,
                 child: Text(
                   routine!.routineBody,
-                  style: TextStyle(fontSize: 25),
+                  style: TextStyle(fontSize: 20),
                 ),
               ),
             ],
@@ -181,33 +234,34 @@ class _RoutineDetailState extends State<RoutineDetail> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RealtimeRoutine(
-              routine: routine,
-            ),
+            builder: (context) => RealtimeRoutine(routine: routine),
           ),
         );
       },
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         backgroundColor: ColorConst.bt,
-        elevation: 4,
+        elevation: 3,
       ),
       child: const SizedBox(
-        width: 80,
-        height: 80,
+        width: 64,
+        height: 64,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text(
                 '参加',
-                style: TextStyle(color: ColorConst.swout),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: ColorConst.swout,
+                ),
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 2),
               Icon(
                 Icons.local_fire_department_rounded,
-                size: 40,
+                size: 26,
                 color: ColorConst.swout,
               ),
             ],

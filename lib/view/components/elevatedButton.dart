@@ -33,35 +33,31 @@ class ButtonComponents extends StatelessWidget {
   }
 }
 
-class SwitchComponents extends StatefulWidget {
-  const SwitchComponents({super.key});
+class SwitchComponents extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
-  @override
-  State<SwitchComponents> createState() => _SwitchComponentsState();
-}
-
-class _SwitchComponentsState extends State<SwitchComponents> {
-  bool isSwitched = false;
+  const SwitchComponents({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('リアルタイムルーティーン'),
-        // Text('リアルタイムルーティーン ${isSwitched ? 'ON' : 'OFF'}'),
-        Switch(
-          value: isSwitched,
-          onChanged: (value) {
-            setState(() {
-              isSwitched = value;
-            });
-          },
-          activeColor: ColorConst.sw,
-          inactiveThumbColor: ColorConst.swout,
-        ),
-      ],
-    ));
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('リアルタイムルーティーン'),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: ColorConst.sw,
+            inactiveThumbColor: ColorConst.swout,
+          ),
+        ],
+      ),
+    );
   }
 }

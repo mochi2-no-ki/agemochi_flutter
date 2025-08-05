@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 ///const
 import 'package:agemoti/const/color.dart';
+import '../../const/characters.dart';
 
 ///component
 import 'package:agemoti/view/components/userInfo.dart';
@@ -40,6 +41,13 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
   final TextEditingController _textEditingController = TextEditingController();
   late List<Message> chatMessages = [];
   List<UserInfoModel> participantUserList = [];
+  List<String> greeting = [
+    'よろしくお願いします！',
+    '頑張ります！',
+    '頑張りましょう！',
+    'お疲れ様でした！',
+    'ありがとうございました！',
+  ];
 
   @override
   void initState() {
@@ -221,11 +229,11 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
                               style: const TextStyle(fontSize: 16),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              '${msg.createdAt.hour}:${msg.createdAt.minute.toString().padLeft(2, '0')}',
-                              style: TextStyle(
-                                  fontSize: 10, color: Colors.grey[600]),
-                            ),
+                            // Text(
+                            //   '${msg.createdAt.hour}:${msg.createdAt.minute.toString().padLeft(2, '0')}',
+                            //   style: TextStyle(
+                            //       fontSize: 10, color: Colors.grey[600]),
+                            // ),
                           ],
                         ),
                       ),
@@ -233,6 +241,20 @@ class _RealtimeRoutineState extends State<RealtimeRoutine> {
                   },
                 ),
               ),
+              // Expanded(
+              //   child: SingleChildScrollView(
+              //     // scrollDirection: Axis.horizontal,
+              //     child: Row(
+              //       children: [
+              //         ...greeting.map((g) {
+              //           return GreetingComponent(
+              //             greet: g,
+              //           );
+              //         })
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
