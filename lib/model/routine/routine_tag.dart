@@ -1,3 +1,4 @@
+//【DB】routine_tag
 ///ルーティーンで表示するタグ
 class RoutineTagModel {
   final String routineTagId;

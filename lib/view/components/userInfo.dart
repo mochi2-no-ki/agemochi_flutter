@@ -17,23 +17,61 @@ class UserInfo extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      //TODO:写真入れ替える
-      leading: Image.asset(testImg),
-      // CircleAvatar(
-      //   backgroundImage: NetworkImage(
-      //     'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io${post.userImgPath}',
-      //   ),
-      // ),
-      title: Text(post.userName),
-      subtitle: Text('@${post.mochiId}'),
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+      child: Row(
+        children: [
+          Container(
+            height: height * 0.05,
+            width: width * 0.05,
+            child: Image.asset(testImg),
+          ),
+
+          Column(
+            children: [
+              Text(
+                post.userName,
+                style: TextStyle(),
+              ),
+              Text('@${post.mochiId}'),
+            ],
+          ),
+
+          // CircleAvatar(
+          //   backgroundImage: NetworkImage(
+          //     'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io${post.userImgPath}',
+          //   ),
+          // ),
+        ],
+      ),
     );
+    // return ListTile(
+    //   //TODO:写真入れ替える
+    //   leading: Container(
+    //       height: height * 0.08,
+    //       width: width * 0.08,
+    //       child: Image.asset(testImg)),
+    //   // CircleAvatar(
+    //   //   backgroundImage: NetworkImage(
+    //   //     'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io${post.userImgPath}',
+    //   //   ),
+    //   // ),
+    //   title: Text(
+    //     post.userName,
+    //     style: TextStyle(),
+    //   ),
+    //   subtitle: Text('@${post.mochiId}'),
+    // );
   }
 }
 
 /// ICONのみ表示
 class UserIcon extends StatelessWidget {
   final String img;
+
   const UserIcon({
     super.key,
     required this.img,
@@ -42,7 +80,15 @@ class UserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Image.asset(img),
+      width: 40, // お好みのサイズに調整
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle, // 丸くしたい場合
+        image: DecorationImage(
+          image: AssetImage(img),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }

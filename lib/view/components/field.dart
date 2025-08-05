@@ -5,12 +5,6 @@ import 'package:flutter/cupertino.dart'; //timepicker
 import '../../const/color.dart';
 import '../../const/dimens.dart';
 
-///model
-import '../../model/routine/routine_tag.dart'; //検索
-
-///api
-import '../../api/search/tag_search.dart'; //検索
-
 ///テキストField
 class TextFieldComponents extends StatelessWidget {
   final TextEditingController? controller;
@@ -55,7 +49,7 @@ class TagFieldComponents extends StatefulWidget {
   const TagFieldComponents({
     super.key,
     required this.tagname,
-    this.fontSize = 20,
+    this.fontSize = 15,
   });
 
   @override
@@ -74,6 +68,7 @@ class _TagFieldComponentsState extends State<TagFieldComponents> {
             style: TextStyle(
               fontSize: widget.fontSize,
               color: ColorConst.tag,
+              fontWeight: FontWeight.bold,
             ),
           ),
           Text(
@@ -84,104 +79,6 @@ class _TagFieldComponentsState extends State<TagFieldComponents> {
           ),
         ],
       ),
-    );
-  }
-}
-
-///検索Field
-class SearchBarComponents extends StatefulWidget {
-  const SearchBarComponents({super.key});
-
-  @override
-  State<SearchBarComponents> createState() => _SearchBarComponentsState();
-}
-
-class _SearchBarComponentsState extends State<SearchBarComponents> {
-  final TextEditingController _controller = TextEditingController();
-  List<TagModel> _searchResults = [];
-
-  void _onSearch() async {
-    final query = _controller.text.trim();
-    if (query.isEmpty) return;
-
-    final results = await fetchTagSearch(query);
-    setState(() {
-      _searchResults = results;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // 検索バー
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 0.5,
-                      offset: const Offset(1, 4),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: _controller,
-                  onSubmitted: (_) => _onSearch(),
-                  decoration: const InputDecoration(
-                    hintText: ' 検索 ',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: _onSearch,
-              icon: const Icon(Icons.search, color: ColorConst.bt),
-            ),
-          ],
-        ),
-
-        // 検索結果候補
-        if (_searchResults.isNotEmpty)
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(1, 2),
-                  blurRadius: 4,
-                )
-              ],
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                final tag = _searchResults[index];
-                return ListTile(
-                  title: Text(tag.tagName),
-                  onTap: () {
-                    print('選択されたタグ: ${tag.tagName}');
-                    // 必要に応じて _controller.text = tag.tagName;
-                  },
-                );
-              },
-            ),
-          ),
-      ],
     );
   }
 }
@@ -256,5 +153,38 @@ class _TimePickerComponenetsState extends State<TimePickerComponenets> {
         ),
       ],
     ));
+  }
+}
+
+class GreetingComponent extends StatefulWidget {
+  final String greet;
+  GreetingComponent({
+    super.key,
+    required this.greet,
+  });
+
+  @override
+  State<GreetingComponent> createState() => _GreetingState();
+}
+
+class _GreetingState extends State<GreetingComponent> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Color(0xFFD5451B),
+          width: 2.0,
+        ),
+      ),
+      color: ColorConst.bk,
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        widget.greet,
+        style: TextStyle(
+          fontSize: 16,
+        ),
+      ),
+    );
   }
 }

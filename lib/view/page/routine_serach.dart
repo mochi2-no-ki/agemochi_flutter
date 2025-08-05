@@ -7,6 +7,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../testData/user_test.dart';
+import '../../model/user/user_Info.dart';
 
 class RoutineSearch extends StatefulWidget {
   RoutineSearch({super.key});
@@ -34,8 +36,20 @@ class _RoutineSearchState extends State<RoutineSearch> {
   bool _hasMore = true;
   String _keyword = '';
   final ScrollController _scrollController = ScrollController();
+  final UserInfoModel usermodel = UserTest().posts;
 
-  // モックのおすすめタグ（固定8つ）
+//   late String randomIcon; // ← インスタンス変数にする
+
+// // ランダム画像のリスト
+//   final List<String> iconPaths = [
+//     'assets/icon/icon1.png',
+//     'assets/icon/icon2.png',
+//     'assets/icon/icon3.png',
+//     'assets/icon/icon4.png',
+//     'assets/icon/icon5.png',
+//   ];
+
+  // おすすめタグ（固定8つ）
   final List<String> _recommendedTags = [
     '筋トレ',
     '朝活',
@@ -46,6 +60,13 @@ class _RoutineSearchState extends State<RoutineSearch> {
     '読書',
     '運動'
   ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -63,48 +84,12 @@ class _RoutineSearchState extends State<RoutineSearch> {
     });
   }
 
-  //タグ検索メソッド（現在はTextfieldになにか入力されるとnotionの　タグ検索　のモックurlを取得する　機能のみ）
-  void _onTagSearch() async {
-    //Textfieldの入力内容
-    final keyword = _searchController.text.trim();
-    if (keyword.isEmpty) {
-      setState(() {
-        _tagList = [];
-      });
-      return;
-    }
-
-    try {
-      final response = await http.get(
-        Uri.parse(
-            'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/tag/list?search=$keyword'),
-      );
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final tags = data['data']['tags'] as List;
-        setState(() {
-          _tagList = tags.map((tag) => tag['tag_name'].toString()).toList();
-        });
-      } else {
-        setState(() => _tagList = []);
-      }
-    } catch (e) {
-      print('タグ取得失敗: $e');
-      setState(() => _tagList = []);
-    }
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  //ユーザー情報取得API
+  //ユーザー情報取得メソッド
   Future<void> _fetchUser() async {
-    final response = await http.get(Uri.parse(
-        'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/user/$_mochiId'));
+    final response = await http.get(
+      Uri.parse(
+          'https://094bb636-e7a7-47e0-bbfa-a914a46afe06.mock.pstmn.io/user/$_mochiId'),
+    );
     if (response.statusCode == 200) {
       final data = json.decode(response.body)['data'];
       setState(() {
@@ -113,39 +98,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
     }
   }
 
-  //ルーティーン取得API
-  Future<void> _fetchRoutines() async {
-    setState(() => _isLoading = true);
-    final response = await http.get(Uri.parse(
-        'https://0932bf29-602b-4402-ad4b-1ad193e06e9c.mock.pstmn.io/routine/list'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> allRoutines =
-          json.decode(response.body)['data']['routines'];
-
-      final filtered = allRoutines.where((routine) {
-        final title = routine['routine_title'] ?? '';
-        final tags = routine['tags']
-            .map<String>((tag) => tag['tag_name'] as String)
-            .toList();
-        return title.contains(_keyword) ||
-            tags.any((tag) => tag.contains(_keyword));
-      }).toList();
-
-      final sliced = filtered.skip(_offset).take(_limit).toList();
-
-      setState(() {
-        _offset += sliced.length;
-        _hasMore = sliced.length == _limit;
-        _routines.addAll(sliced);
-        _isLoading = false;
-      });
-    } else {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  //キーワード検索メソッド（ルーティーンタイトル、タグ検索）
+  //キーワード検索メソッド（タグ、ルーティーンタイトル検索）
   void _onSearchChanged() {
     setState(() {
       _routines.clear();
@@ -153,7 +106,89 @@ class _RoutineSearchState extends State<RoutineSearch> {
       _hasMore = true;
       _keyword = _searchController.text.trim();
     });
+    _fetchTags();
     _fetchRoutines();
+  }
+
+  //タグ検索メソッド
+  void _fetchTags() async {
+    final keyword = _searchController.text.trim().toLowerCase();
+    if (keyword.isEmpty) {
+      setState(() {
+        _tagList = [];
+      });
+      return;
+    }
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://094bb636-e7a7-47e0-bbfa-a914a46afe06.mock.pstmn.io/tag/list'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> tags = json.decode(response.body)['data']['tags'];
+        final List<String> matchedTags = tags
+            .map((tag) => tag['tag_name'].toString())
+            .where((name) => name.toLowerCase().contains(keyword))
+            .toList();
+
+        setState(() {
+          _tagList = matchedTags;
+        });
+      } else {
+        setState(() => _tagList = []);
+        print('タグ検索失敗: status=${response.statusCode}');
+      }
+    } catch (e) {
+      print('タグ取得失敗: $e');
+      setState(() => _tagList = []);
+    }
+  }
+
+  //ルーティーン検索メソッド
+  Future<void> _fetchRoutines() async {
+    setState(() => _isLoading = true);
+    try {
+      final response = await http.get(Uri.parse(
+          'https://094bb636-e7a7-47e0-bbfa-a914a46afe06.mock.pstmn.io/routine/list'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> allRoutines =
+            json.decode(response.body)['data']['routines'];
+
+        final keyword = _keyword.toLowerCase().trim();
+
+        // 空なら全件表示
+        final filtered = keyword.isEmpty
+            ? allRoutines
+            : allRoutines.where((routine) {
+                final title =
+                    (routine['routine_title'] ?? '').toString().toLowerCase();
+                final tags = (routine['tags'] as List<dynamic>)
+                    .map((tag) =>
+                        (tag['tag_name'] ?? '').toString().toLowerCase())
+                    .toList();
+
+                return title.contains(keyword) ||
+                    tags.any((tag) => tag.contains(keyword));
+              }).toList();
+
+        final sliced = filtered.skip(_offset).take(_limit).toList();
+
+        setState(() {
+          _offset += sliced.length;
+          _hasMore = sliced.length == _limit;
+          _routines.addAll(sliced);
+          _isLoading = false;
+        });
+      } else {
+        print('API Error: ${response.statusCode}');
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      print('例外発生: $e');
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -161,7 +196,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
-    //タグ検索欄になにか入力されているなら true 空欄なら false
+    //検索欄になにか入力されているなら true 空欄なら false
     final isSearching = _searchController.text.trim().isNotEmpty;
 
     //表示するタグの内容
@@ -209,16 +244,18 @@ class _RoutineSearchState extends State<RoutineSearch> {
                       //------自分のユーザーアイコン表示
                       //------仮でアセットのアイコン表示--------
                       CircleAvatar(
-                          radius: 24,
-                          child: Image.asset('assets/icon/icon2.png')),
+                        radius: 24,
+                        child: Image.asset(usermodel.userImgPath),
+                        backgroundColor: Colors.white,
+                      ),
                       const SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(_userName,
+                          Text(usermodel.userName,
                               style: const TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold)),
-                          Text(_mochiId,
+                          Text(usermodel.mochiId,
                               style: const TextStyle(
                                   fontSize: 14, color: Colors.grey))
                         ],
@@ -250,7 +287,6 @@ class _RoutineSearchState extends State<RoutineSearch> {
                         ),
                         child: TextField(
                           onChanged: (value) {
-                            _onTagSearch();
                             _onSearchChanged();
                           },
                           controller: _searchController,
@@ -294,7 +330,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
 
             SizedBox(height: height * 0.01),
 
-            // タグ表示　今はなにか入力されるとタグ検索のモックurlを表示
+            // タグ表示
             Center(
               child: Text(
                 headerText,
@@ -310,15 +346,15 @@ class _RoutineSearchState extends State<RoutineSearch> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: tagsToShow.length > 8 ? 8 : tagsToShow.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 横2列
-                  mainAxisSpacing: 12, // 縦スペース
-                  crossAxisSpacing: 24, // 横スペース
-                  childAspectRatio: 6, // ボタンの横長比率（調整可）
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 24,
+                  childAspectRatio: 6,
                 ),
                 itemBuilder: (context, index) {
                   final tag = tagsToShow[index];
                   return OutlinedButton.icon(
-                    onPressed: () {}, // ← ボタンタップ時の処理（後で）
+                    onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -365,6 +401,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
                         inactiveThumbColor: Colors.deepOrange,
                       ),
                     ]),
+                    //--------------------------
                     //所要時間
                     SizedBox(height: height * 0.01),
                     Row(children: [
@@ -387,6 +424,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
                             .toList(),
                       ),
                     ]),
+                    //--------------------------
                     //時間帯
                     SizedBox(height: height * 0.01),
                     Row(children: [
@@ -440,7 +478,6 @@ class _RoutineSearchState extends State<RoutineSearch> {
               child: Center(
                 child: Container(
                   width: width * 0.8,
-                  // height: height * 0.8,
                   child: GridView.builder(
                     controller: _scrollController,
                     gridDelegate:
@@ -466,7 +503,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
                       return Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.orange),
+                          // border: Border.all(color: Colors.orange),
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white,
                           boxShadow: [
@@ -482,11 +519,11 @@ class _RoutineSearchState extends State<RoutineSearch> {
                           children: [
                             Row(
                               children: [
+                                // UserInfo(post: ,testImg: randomImgPath,)
                                 CircleAvatar(
                                   radius: 16,
-                                  child: Image.asset(
-                                      'assets/icon/icon1.png'), //ユーザーアイコンをすべて仮でicon1.pngで表示
-                                  backgroundColor: Colors.grey[200],
+                                  child: Image.asset('assets/icon/icon.png'),
+                                  backgroundColor: Colors.white,
                                 ),
                                 SizedBox(width: width * 0.01),
                                 Column(
@@ -494,10 +531,12 @@ class _RoutineSearchState extends State<RoutineSearch> {
                                   children: [
                                     Text("name",
                                         style: TextStyle(fontSize: 10)),
-                                    Text(user['mochi_id'],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12)),
+                                    Text(
+                                      user['mochi_id'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -536,7 +575,7 @@ class _RoutineSearchState extends State<RoutineSearch> {
                                   children: [
                                     const Icon(
                                         Icons
-                                            .back_hand_sharp, //参考になったの良いアイコンが見つかってないです
+                                            .thumb_up_alt_outlined, //参考になったの良いアイコンが見つかってないです
                                         size: 16,
                                         color: Colors.orange),
                                     Text('${routine['reference_count']}',
